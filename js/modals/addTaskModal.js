@@ -25,11 +25,13 @@ export function renderAddTaskModal() {
             <div class="form-group">
               <label class="form-label">Status</label>
               <select class="form-select" id="taskStatusInput">
-                ${COLUMNS.map(c => `
+                ${COLUMNS.map(
+                  (c) => `
                   <option value="${c.id}" ${state.selectedColumnId === c.id ? "selected" : ""}>
                     ${c.label}
                   </option>
-                `).join("")}
+                `
+                ).join("")}
               </select>
             </div>
 
@@ -51,18 +53,42 @@ export function renderAddTaskModal() {
           <div class="form-group">
             <label class="form-label">Assignees</label>
             <div class="assignee-grid">
-              ${state.members.map(member => `
-                <button
-                  type="button"
-                  class="assignee-option"
-                  data-assignee-id="${member.id}"
-                >
-                  <div class="avatar" style="background:${member.color}20;color:${member.color};margin:0;border:none;width:20px;height:20px;font-size:8px">
-                    ${member.initials}
-                  </div>
-                  <span>${member.name}</span>
-                </button>
-              `).join("")}
+              ${state.members
+                .map(
+                  (member) => `
+                  <button
+                    type="button"
+                    class="assignee-option"
+                    data-assignee-id="${member.id}"
+                  >
+                    <div class="avatar" style="background:${member.color}20;color:${member.color};margin:0;border:none;width:20px;height:20px;font-size:8px">
+                      ${member.initials}
+                    </div>
+                    <span>${member.name}</span>
+                  </button>
+                `
+                )
+                .join("")}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label">Labels</label>
+            <div class="labels-grid">
+              ${state.labels
+                .map(
+                  (label) => `
+                  <button
+                    type="button"
+                    class="label-option"
+                    data-label-id="${label.id}"
+                    style="color:${label.color}"
+                  >
+                    ${label.name}
+                  </button>
+                `
+                )
+                .join("")}
             </div>
           </div>
         </div>

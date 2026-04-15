@@ -41,6 +41,10 @@ export function renderTaskDetailModal(taskId) {
               <textarea class="form-textarea" id="detailDescriptionInput">${escHtml(task.description || "")}</textarea>
             </div>
 
+            <div style="font-size:12px;color:var(--text3);margin-bottom:18px">
+              Last updated: ${task.updated_at ? timeAgo(task.updated_at) : "Not available"}
+            </div>
+
             <div class="comments-section">
               <h3 style="margin-bottom:12px">Comments</h3>
               ${
@@ -48,11 +52,11 @@ export function renderTaskDetailModal(taskId) {
                   ? comments
                       .map(
                         (comment) => `
-                  <div class="comment">
-                    <div style="font-size:12px;color:var(--text2)">${escHtml(comment.text)}</div>
-                    <div style="font-size:11px;color:var(--text3);margin-top:4px">${timeAgo(comment.created_at)}</div>
-                  </div>
-                `
+                    <div class="comment">
+                      <div style="font-size:12px;color:var(--text2)">${escHtml(comment.text)}</div>
+                      <div style="font-size:11px;color:var(--text3);margin-top:4px">${timeAgo(comment.created_at)}</div>
+                    </div>
+                  `
                       )
                       .join("")
                   : `<div style="font-size:12px;color:var(--text3)">No comments yet.</div>`
@@ -66,11 +70,11 @@ export function renderTaskDetailModal(taskId) {
                   ? activity
                       .map(
                         (item) => `
-                  <div style="margin-bottom:10px">
-                    <div style="font-size:12px;color:var(--text2)">${item.text}</div>
-                    <div style="font-size:11px;color:var(--text3);margin-top:4px">${timeAgo(item.created_at)}</div>
-                  </div>
-                `
+                    <div style="margin-bottom:10px">
+                      <div style="font-size:12px;color:var(--text2)">${item.text}</div>
+                      <div style="font-size:11px;color:var(--text3);margin-top:4px">${timeAgo(item.created_at)}</div>
+                    </div>
+                  `
                       )
                       .join("")
                   : `<div style="font-size:12px;color:var(--text3)">No activity yet.</div>`
@@ -109,6 +113,27 @@ export function renderTaskDetailModal(taskId) {
                           ${member.initials}
                         </div>
                         <span>${member.name}</span>
+                      </button>
+                    `;
+                  })
+                  .join("")}
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div class="side-label">Labels</div>
+              <div class="labels-grid">
+                ${state.labels
+                  .map((label) => {
+                    const selected = (task.labels || []).includes(label.id);
+                    return `
+                      <button
+                        type="button"
+                        class="label-option ${selected ? "selected" : ""}"
+                        data-detail-label-id="${label.id}"
+                        style="color:${label.color}"
+                      >
+                        ${label.name}
                       </button>
                     `;
                   })

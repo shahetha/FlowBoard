@@ -2,12 +2,25 @@ import { state } from "../state.js";
 import { createTask, updateTask, removeTask } from "../services/taskService.js";
 import { rerender } from "../app.js";
 import { toast } from "../components/toast.js";
+import { uuid } from "../utils/ids.js";
 
 let selectedAssignees = [];
+let selectedLabels = [];
+
+function addActivity(taskId, text) {
+  state.activity.unshift({
+    id: uuid(),
+    task_id: taskId,
+    text,
+    actor_id: "system",
+    created_at: new Date().toISOString(),
+  });
+}
 
 export function bindTaskHandlers() {
   const resetAddTaskState = () => {
     selectedAssignees = [];
+    selectedLabels = [];
   };
 
   const forceCloseModal = () => {
@@ -73,7 +86,6 @@ export function bindTaskHandlers() {
     });
   });
 
-  // Add Task modal assignees
   document.querySelectorAll("[data-assignee-id]").forEach((button) => {
     button.addEventListener("click", () => {
       const memberId = button.dataset.assigneeId;
@@ -89,7 +101,21 @@ export function bindTaskHandlers() {
     });
   });
 
-  // Task Detail assignees
+  document.querySelectorAll("[data-label-id]").forEach((button) => {
+    button.addEventListener("click", () => {
+      const labelId = button.dataset.labelId;
+      if (!labelId) return;
+
+      if (selectedLabels.includes(labelId)) {
+        selectedLabels = selectedLabels.filter((id) => id !== labelId);
+        button.classList.remove("selected");
+      } else {
+        selectedLabels.push(labelId);
+        button.classList.add("selected");
+      }
+    });
+  });
+
   document.querySelectorAll("[data-detail-assignee-id]").forEach((button) => {
     button.addEventListener("click", async () => {
       if (!state.selectedTaskId) return;
@@ -108,10 +134,38 @@ export function bindTaskHandlers() {
 
       try {
         await updateTask(state.selectedTaskId, { assignees: nextAssignees });
+        addActivity(state.selectedTaskId, "updated assignees");
         rerender();
       } catch (error) {
         console.error("Update assignees failed:", error);
         toast(error?.message || "Failed to update assignees", "error");
+      }
+    });
+  });
+
+  document.querySelectorAll("[data-detail-label-id]").forEach((button) => {
+    button.addEventListener("click", async () => {
+      if (!state.selectedTaskId) return;
+
+      const labelId = button.dataset.detailLabelId;
+      const task = state.tasks.find((t) => t.id === state.selectedTaskId);
+      if (!task || !labelId) return;
+
+      let nextLabels = [...(task.labels || [])];
+
+      if (nextLabels.includes(labelId)) {
+        nextLabels = nextLabels.filter((id) => id !== labelId);
+      } else {
+        nextLabels.push(labelId);
+      }
+
+      try {
+        await updateTask(state.selectedTaskId, { labels: nextLabels });
+        addActivity(state.selectedTaskId, "updated labels");
+        rerender();
+      } catch (error) {
+        console.error("Update labels failed:", error);
+        toast(error?.message || "Failed to update labels", "error");
       }
     });
   });
@@ -156,6 +210,7 @@ export function bindTaskHandlers() {
           priority,
           due_date,
           assignees: [...selectedAssignees],
+          labels: [...selectedLabels],
         });
 
         forceCloseModal();
@@ -177,6 +232,7 @@ export function bindTaskHandlers() {
     detailTitleInput.addEventListener("change", async (e) => {
       try {
         await updateTask(state.selectedTaskId, { title: e.target.value });
+        addActivity(state.selectedTaskId, "updated title");
         rerender();
       } catch (error) {
         console.error("Update title failed:", error);
@@ -189,6 +245,7 @@ export function bindTaskHandlers() {
     detailDescriptionInput.addEventListener("change", async (e) => {
       try {
         await updateTask(state.selectedTaskId, { description: e.target.value });
+        addActivity(state.selectedTaskId, "updated description");
         rerender();
       } catch (error) {
         console.error("Update description failed:", error);
@@ -201,6 +258,7 @@ export function bindTaskHandlers() {
     detailPriorityInput.addEventListener("change", async (e) => {
       try {
         await updateTask(state.selectedTaskId, { priority: e.target.value });
+        addActivity(state.selectedTaskId, "updated priority");
         rerender();
       } catch (error) {
         console.error("Update priority failed:", error);
@@ -215,6 +273,7 @@ export function bindTaskHandlers() {
         await updateTask(state.selectedTaskId, {
           due_date: e.target.value || null,
         });
+        addActivity(state.selectedTaskId, "updated due date");
         rerender();
       } catch (error) {
         console.error("Update due date failed:", error);
@@ -244,6 +303,7 @@ export function bindTaskHandlers() {
         await updateTask(state.selectedTaskId, {
           status: button.dataset.statusTab,
         });
+        addActivity(state.selectedTaskId, `moved to ${button.dataset.statusTab}`);
         rerender();
       } catch (error) {
         console.error("Update status failed:", error);
