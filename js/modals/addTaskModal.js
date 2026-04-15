@@ -47,6 +47,24 @@ export function renderAddTaskModal() {
             <label class="form-label">Due Date</label>
             <input class="form-input" type="date" id="taskDueDateInput" />
           </div>
+
+          <div class="form-group">
+            <label class="form-label">Assignees</label>
+            <div class="assignee-grid">
+              ${state.members.map(member => `
+                <button
+                  type="button"
+                  class="assignee-option"
+                  data-assignee-id="${member.id}"
+                >
+                  <div class="avatar" style="background:${member.color}20;color:${member.color};margin:0;border:none;width:20px;height:20px;font-size:8px">
+                    ${member.initials}
+                  </div>
+                  <span>${member.name}</span>
+                </button>
+              `).join("")}
+            </div>
+          </div>
         </div>
 
         <div class="modal-footer">

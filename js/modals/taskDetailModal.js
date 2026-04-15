@@ -3,12 +3,16 @@ import { COLUMNS } from "../config.js";
 import { escHtml } from "../utils/helpers.js";
 import { timeAgo } from "../utils/date.js";
 
+function getMember(id) {
+  return state.members.find((m) => m.id === id);
+}
+
 export function renderTaskDetailModal(taskId) {
-  const task = state.tasks.find(t => t.id === taskId);
+  const task = state.tasks.find((t) => t.id === taskId);
   if (!task) return "";
 
-  const comments = state.comments.filter(c => c.task_id === taskId);
-  const activity = state.activity.filter(a => a.task_id === taskId);
+  const comments = state.comments.filter((c) => c.task_id === taskId);
+  const activity = state.activity.filter((a) => a.task_id === taskId);
 
   return `
     <div class="overlay" id="modalOverlay">
@@ -23,11 +27,13 @@ export function renderTaskDetailModal(taskId) {
             <input class="task-title-input" id="detailTitleInput" value="${escHtml(task.title)}" />
 
             <div class="status-tabs">
-              ${COLUMNS.map(c => `
+              ${COLUMNS.map(
+                (c) => `
                 <button class="status-tab ${task.status === c.id ? `active-${c.id}` : ""}" data-status-tab="${c.id}">
                   ${c.label}
                 </button>
-              `).join("")}
+              `
+              ).join("")}
             </div>
 
             <div class="form-group">
@@ -37,22 +43,38 @@ export function renderTaskDetailModal(taskId) {
 
             <div class="comments-section">
               <h3 style="margin-bottom:12px">Comments</h3>
-              ${comments.map(comment => `
-                <div class="comment">
-                  <div style="font-size:12px;color:var(--text2)">${escHtml(comment.text)}</div>
-                  <div style="font-size:11px;color:var(--text3);margin-top:4px">${timeAgo(comment.created_at)}</div>
-                </div>
-              `).join("") || `<div style="font-size:12px;color:var(--text3)">No comments yet.</div>`}
+              ${
+                comments.length
+                  ? comments
+                      .map(
+                        (comment) => `
+                  <div class="comment">
+                    <div style="font-size:12px;color:var(--text2)">${escHtml(comment.text)}</div>
+                    <div style="font-size:11px;color:var(--text3);margin-top:4px">${timeAgo(comment.created_at)}</div>
+                  </div>
+                `
+                      )
+                      .join("")
+                  : `<div style="font-size:12px;color:var(--text3)">No comments yet.</div>`
+              }
             </div>
 
             <div class="comments-section">
               <h3 style="margin-bottom:12px">Activity</h3>
-              ${activity.map(item => `
-                <div style="margin-bottom:10px">
-                  <div style="font-size:12px;color:var(--text2)">${item.text}</div>
-                  <div style="font-size:11px;color:var(--text3);margin-top:4px">${timeAgo(item.created_at)}</div>
-                </div>
-              `).join("") || `<div style="font-size:12px;color:var(--text3)">No activity yet.</div>`}
+              ${
+                activity.length
+                  ? activity
+                      .map(
+                        (item) => `
+                  <div style="margin-bottom:10px">
+                    <div style="font-size:12px;color:var(--text2)">${item.text}</div>
+                    <div style="font-size:11px;color:var(--text3);margin-top:4px">${timeAgo(item.created_at)}</div>
+                  </div>
+                `
+                      )
+                      .join("")
+                  : `<div style="font-size:12px;color:var(--text3)">No activity yet.</div>`
+              }
             </div>
           </div>
 
@@ -69,6 +91,29 @@ export function renderTaskDetailModal(taskId) {
             <div class="form-group">
               <div class="side-label">Due Date</div>
               <input class="form-input" id="detailDueDateInput" type="date" value="${task.due_date || ""}" />
+            </div>
+
+            <div class="form-group">
+              <div class="side-label">Assignees</div>
+              <div class="assignee-grid">
+                ${state.members
+                  .map((member) => {
+                    const selected = (task.assignees || []).includes(member.id);
+                    return `
+                      <button
+                        type="button"
+                        class="assignee-option ${selected ? "selected" : ""}"
+                        data-detail-assignee-id="${member.id}"
+                      >
+                        <div class="avatar" style="background:${member.color}20;color:${member.color};margin:0;border:none;width:20px;height:20px;font-size:8px">
+                          ${member.initials}
+                        </div>
+                        <span>${member.name}</span>
+                      </button>
+                    `;
+                  })
+                  .join("")}
+              </div>
             </div>
 
             <div class="form-group">

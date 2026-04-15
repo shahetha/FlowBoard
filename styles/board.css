@@ -1,100 +1,130 @@
 .board-area {
-    flex: 1;
-    overflow-x: auto;
-    overflow-y: hidden;
-  }
-  
-  .board {
-    display: flex;
-    gap: 16px;
-    padding: 20px 24px;
-    min-height: 100%;
-    width: max-content;
-    min-width: 100%;
-  }
-  
-  .column {
-    width: 300px;
-    flex-shrink: 0;
-    display: flex;
-    flex-direction: column;
-    background: var(--bg2);
-    border: 1px solid var(--border);
-    border-radius: var(--radius);
-    overflow: hidden;
-    transition: border-color 0.2s;
-  }
-  
-  .column.drag-over {
-    border-color: var(--accent);
-    box-shadow: 0 0 0 2px var(--accentbg);
-  }
-  
-  .col-header {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    padding: 14px 16px;
-    border-bottom: 1px solid var(--border);
-    background: var(--bg2);
-  }
-  
-  .col-dot {
-    width: 9px;
-    height: 9px;
-    border-radius: 50%;
-  }
-  
-  .col-title {
-    font-family: 'Syne', sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-  }
-  
-  .col-count {
-    margin-left: auto;
-    background: var(--surface);
-    color: var(--text2);
-    font-size: 11px;
-    font-weight: 600;
-    padding: 2px 7px;
-    border-radius: 10px;
-  }
-  
-  .col-body {
-    flex: 1;
-    overflow-y: auto;
-    padding: 10px;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-    min-height: 100px;
-  }
-  
-  .add-in-col {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    width: calc(100% - 20px);
-    margin: 0 10px 10px;
-    padding: 8px 10px;
-    border-radius: var(--radius-sm);
-    background: transparent;
-    border: 1px dashed var(--border);
-    color: var(--text3);
-    font-size: 12px;
-    cursor: pointer;
-  }
-  
-  .add-in-col:hover {
-    border-color: var(--border2);
-    color: var(--text2);
-    background: var(--surface);
-  }
-  
-  .empty-col {
-    text-align: center;
-    padding: 20px 10px;
-    color: var(--text3);
-    font-size: 12px;
-  }
+  flex: 1;
+  min-height: 0;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 18px 24px 24px;
+}
+
+.board {
+  display: flex;
+  gap: 18px;
+  align-items: stretch;
+  width: max-content;
+  min-width: 100%;
+  height: 100%;
+  min-height: 0;
+}
+
+.column {
+  width: 320px;
+  min-width: 320px;
+  display: flex;
+  flex-direction: column;
+  background: rgba(18, 22, 44, 0.95);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 18px;
+  overflow: hidden;
+  height: 100%;
+  min-height: 0;
+  max-height: 100%;
+  transition: all 0.2s ease;
+}
+
+.column.drag-over {
+  border: 1px solid rgba(124, 110, 245, 0.8);
+  box-shadow: 0 0 0 2px rgba(124, 110, 245, 0.15);
+  transform: translateY(-2px);
+}
+
+.col-header {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 16px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  flex-shrink: 0;
+}
+
+.col-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+.col-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.col-count {
+  margin-left: auto;
+  min-width: 24px;
+  height: 24px;
+  padding: 0 8px;
+  border-radius: 999px;
+  background: rgba(124, 110, 245, 0.14);
+  color: #b8b8ff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+}
+
+.col-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.col-body::-webkit-scrollbar {
+  width: 6px;
+}
+
+.col-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.col-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+}
+
+.col-body::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.16);
+}
+
+.empty-col {
+  padding: 20px;
+  text-align: center;
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.35);
+  border: 1px dashed rgba(255, 255, 255, 0.05);
+  border-radius: 14px;
+}
+
+.add-in-col {
+  margin: 0 12px 12px;
+  padding: 12px;
+  border: 1px dashed rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  text-align: center;
+  color: rgba(255, 255, 255, 0.45);
+  font-size: 14px;
+  cursor: pointer;
+  transition: 0.2s ease;
+  user-select: none;
+  flex-shrink: 0;
+}
+
+.add-in-col:hover {
+  border-color: rgba(124, 110, 245, 0.5);
+  color: #c9c6ff;
+  background: rgba(124, 110, 245, 0.06);
+}
